@@ -1,9 +1,6 @@
 package com.company;
 import java.io.*;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.HashSet;
-import java.util.Set;
+import java.util.*;
 
 class Activity implements Comparable<Activity>
 {
@@ -44,7 +41,6 @@ class Activity implements Comparable<Activity>
 	}
 }
 
-
 public class Main
 {
 
@@ -65,10 +61,41 @@ public class Main
 		}
 	}
 
+	public static String printUnique(boolean unique)
+	{
+		if(unique)
+		{
+			return "IT HAS A UNIQUE SOLUTION";
+		}
+		else
+		{
+			return "IT HAS MULTIPLE SOLUTIONS";
+		}
+	}
+
+	public static String buildStringOutput(int maxValue, ArrayList<Integer> finalActivityArray, String uniqueness)
+	{
+		String max = String.valueOf(maxValue);
+		String activityString;
+
+		StringBuilder builder = new StringBuilder();
+
+		Collections.sort(finalActivityArray);
+
+		for (int i = 0; i < finalActivityArray.size(); i++)
+		{
+			builder.append(finalActivityArray.get(i)).append(" ");
+		}
+
+		activityString = builder.toString();
+
+		return max + "\n" + activityString + "\n" + uniqueness;
+	}
+
 	public static void main(String[] args)
 	{
 
-		File file = new File("/Users/davidskinner/Documents/Repositories/GreedyAlgorithm/input2.txt");
+		File file = new File("/Users/davidskinner/Documents/Repositories/GreedyAlgorithm/input3.txt");
 
 		int numberOfActivities = 0;
 		int interval;
@@ -113,11 +140,6 @@ public class Main
 		//Sort the activities by monotonically increasing finish time
 		Collections.sort(activities);
 
-//		for (Activity a : activities)
-//		{
-//			log(a.toString());
-//		}
-
 		//variable to see if solution is unique or not
 		boolean unique = false;
 
@@ -126,47 +148,70 @@ public class Main
 
 		// Use dynamic programming
 		// stored values
-		int dynamicProgramming[] = new int[numberOfActivities];
+		int cache[] = new int[numberOfActivities];
 
 		for (int i = 0; i < numberOfActivities ; i++)
 		{
-			dynamicProgramming[i] = activities.get(i).Value;
+			cache[i] = activities.get(i).Value;
 		}
-
-		ArrayList<Integer> uniqueNums = new ArrayList<>();
-
 
 		for(int i=1; i < numberOfActivities; i++)
 		{
 			for(int j=0; j < i; j++)
 			{
 				if(activities.get(j).Finish <= activities.get(i).Start)
-					dynamicProgramming[i]= Math.max(dynamicProgramming[j]+activities.get(i).Value, dynamicProgramming[i]);
-				maxValue= Math.max(dynamicProgramming[i], maxValue);
+					cache[i]= Math.max(cache[j]+activities.get(i).Value, cache[i]);
+				maxValue= Math.max(cache[i], maxValue);
 			}
 		}
 
 		log(String.valueOf("max value: " + maxValue));
+		int bigmax = maxValue;
 
-		int activityPositions[] = new int[numberOfActivities];
+		ArrayList<Integer> activityPositions = new ArrayList<>();
 		int k = 0;
 
 		for(int i = numberOfActivities - 1; i >= 0 ; i--)
 		{
-			if(dynamicProgramming[i] == maxValue)
+			if(cache[i] == maxValue)
 			{
 				maxValue -= activities.get(i).Value;
-				activityPositions[k] = activities.get(i).ID;
-				k++;
+				 activityPositions.add(activities.get(i).ID);
+
 			}
 		}
 
 		for (int i = k-1 ; i >= 0 ; i--)
 		{
-			log(String.valueOf(activityPositions[i]));
+			log(String.valueOf(activityPositions.get(i)));
 		}
 
-		// "IT HAS A UNIQUE SOLUTION" or "IT HAS MULTIPLE SOLUTIONS"
-		isUnique(unique);
+		int maxCounter = 0;
+		for (int i = 0; i < cache.length; i++)
+		{
+			if(cache[i] == bigmax)
+			{
+				maxCounter++;
+			}
+		}
+
+		if(maxCounter > 1)
+		{
+			unique = false;
+		}
+		else
+		{
+			unique = true;
+		}
+
+		try (PrintStream out = new PrintStream(new FileOutputStream("output.txt"))) {
+			out.print(buildStringOutput(bigmax, activityPositions , printUnique(unique)));
+
+		} catch (FileNotFoundException e)
+		{
+			e.printStackTrace();
+		}
+
+
 	}
 }
