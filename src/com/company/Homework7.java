@@ -41,7 +41,7 @@ class Activity implements Comparable<Activity>
 	}
 }
 
-public class Main
+public class Homework7
 {
 
 	public static void log(String str)
@@ -73,6 +73,8 @@ public class Main
 		}
 	}
 
+
+
 	public static String buildStringOutput(int maxValue, ArrayList<Integer> finalActivityArray, String uniqueness)
 	{
 		String max = String.valueOf(maxValue);
@@ -94,8 +96,10 @@ public class Main
 
 	public static void main(String[] args)
 	{
+		String inputFile = args[0];
+		String outputFile = args[1];
 
-		File file = new File("/Users/davidskinner/Documents/Repositories/GreedyAlgorithm/input3.txt");
+		File file = new File("/Users/davidskinner/Documents/Repositories/GreedyAlgorithm/" + inputFile);
 
 		int numberOfActivities = 0;
 		int interval;
@@ -140,6 +144,12 @@ public class Main
 		//Sort the activities by monotonically increasing finish time
 		Collections.sort(activities);
 
+		for (Activity a:
+		     activities)
+		{
+			log(a.toString());
+		}
+
 		//variable to see if solution is unique or not
 		boolean unique = false;
 
@@ -169,23 +179,26 @@ public class Main
 		int bigmax = maxValue;
 
 		ArrayList<Integer> activityPositions = new ArrayList<>();
-		int k = 0;
 
+		// count up through the activities
 		for(int i = numberOfActivities - 1; i >= 0 ; i--)
 		{
 			if(cache[i] == maxValue)
 			{
 				maxValue -= activities.get(i).Value;
 				 activityPositions.add(activities.get(i).ID);
-
 			}
 		}
 
-		for (int i = k-1 ; i >= 0 ; i--)
-		{
-			log(String.valueOf(activityPositions.get(i)));
-		}
+		//decide if there are duplicates
+		
+		// check each activity in activity positions
 
+		for (int a : activityPositions)
+		{
+
+		}
+		
 		int maxCounter = 0;
 		for (int i = 0; i < cache.length; i++)
 		{
@@ -204,7 +217,7 @@ public class Main
 			unique = true;
 		}
 
-		try (PrintStream out = new PrintStream(new FileOutputStream("output.txt"))) {
+		try (PrintStream out = new PrintStream(new FileOutputStream(outputFile))) {
 			out.print(buildStringOutput(bigmax, activityPositions , printUnique(unique)));
 
 		} catch (FileNotFoundException e)
