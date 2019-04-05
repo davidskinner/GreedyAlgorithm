@@ -43,7 +43,6 @@ class Activity implements Comparable<Activity>
 
 public class Homework7
 {
-
 	public static void log(String str)
 	{
 		System.out.println(str);
@@ -96,8 +95,19 @@ public class Homework7
 
 	public static void main(String[] args)
 	{
-		String inputFile = args[0];
-		String outputFile = args[1];
+
+		String inputFile = "";
+		String outputFile = "";
+		try{
+			inputFile = args[0];
+			outputFile = args[1];
+		}
+		catch (Exception e)
+		{
+			log(e.toString());
+			log("Make sure to pass valid strings for file names as arguments to the program.");
+		}
+
 
 		File file = new File("/Users/davidskinner/Documents/Repositories/GreedyAlgorithm/" + inputFile);
 
